@@ -2,6 +2,7 @@ package com.zrosfjord.cs.search;
 
 import com.zrosfjord.cs.Movie;
 import com.zrosfjord.cs.Screen;
+import com.zrosfjord.cs.utils.ReflectionUtils;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -61,11 +62,11 @@ public enum SearchTerm {
      * @return Method to convert string to variableType
      * @throws NoSuchMethodException if the method doesn't exist
      */
-    public Method getConversionMethod() throws NoSuchMethodException {
+    public Method getConversionMethod() {
         if(methodName == null)
             return null;
 
-        Method m = variableType.getDeclaredMethod(methodName, String.class);
+        Method m = ReflectionUtils.getMethod(variableType, methodName);
         m.setAccessible(true);
         return m;
     }
