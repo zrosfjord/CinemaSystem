@@ -1,5 +1,7 @@
 package com.zrosfjord.cs.search;
 
+import com.zrosfjord.cs.utils.ReflectionUtils;
+
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.function.BiFunction;
@@ -23,15 +25,7 @@ public class SearchTermItem<T> {
         this.term = term;
         this.rawItem = item;
 
-        try {
-            init();
-        } catch (NoSuchMethodException e) {
-            e.printStackTrace();
-        } catch (InvocationTargetException e) {
-            e.printStackTrace();
-        } catch (IllegalAccessException e) {
-            e.printStackTrace();
-        }
+        init();
     }
 
     /**
@@ -41,10 +35,10 @@ public class SearchTermItem<T> {
      * @throws InvocationTargetException if there are issues converting
      * @throws IllegalAccessException if there are issues converting
      */
-    private void init() throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
+    private void init() {
         Method m = term.getConversionMethod();
         if(m != null)
-            this.item = (T) m.invoke(null, rawItem.toUpperCase());
+            this.item = (T) ReflectionUtils.invokeMethod(m, null, rawItem.toUpperCase());
         else
             this.item = (T) rawItem;
 
