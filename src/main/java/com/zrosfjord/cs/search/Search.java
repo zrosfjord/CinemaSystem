@@ -53,7 +53,7 @@ public class Search {
                 // Variable loop
                 while (vMatch.find()) {
                     String variableName = typeStr + "-" + vMatch.group("variable").trim();
-                    String value = vMatch.group("value").trim();
+                    String value = vMatch.group("value").trim().toUpperCase();
 
                     SearchTerm term = SearchTerm.fromVariableName(variableName);
 
@@ -134,6 +134,8 @@ public class Search {
                             put(SearchTerm.MOVIE_FORMAT, m.getFormat());
                             put(SearchTerm.MOVIE_RATING, m.getRating());
                             put(SearchTerm.MOVIE_NAME, m.getName());
+                            put(SearchTerm.MOVIE_HRS, m.getTimeDuration().getHours());
+                            put(SearchTerm.MOVIE_MINS, m.getTimeDuration().getMinutes());
                             put(SearchTerm.TIME_HR, nextItem.getStartTime().getHour());
                             put(SearchTerm.TIME_MIN, nextItem.getStartTime().getMinute());
                         }};

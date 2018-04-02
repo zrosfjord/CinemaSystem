@@ -48,6 +48,7 @@ public class CinemaSystemTester {
             riverS2.getMoviesSchedule().addScheduleable(LocalDateTime.now().plusMinutes(2), inception);
             riverS2.getMoviesSchedule().addScheduleable(LocalDateTime.now().plusMinutes(4), django);
 
+
             gardenS1.getMoviesSchedule().addScheduleable(LocalDateTime.now(), shrek);
             gardenS1.getMoviesSchedule().addScheduleable(LocalDateTime.now().plusMinutes(1), inception);
             gardenS1.getMoviesSchedule().addScheduleable(LocalDateTime.now().plusMinutes(3), incredibles);
@@ -58,6 +59,7 @@ public class CinemaSystemTester {
         } catch (ScheduleConflictException ex) {
             ex.printStackTrace();
         }
+
 
         Scanner scanner = new Scanner(System.in);
 

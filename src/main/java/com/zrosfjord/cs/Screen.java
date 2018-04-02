@@ -26,13 +26,14 @@ public class Screen implements ScheduleObserver<Movie> {
 
     /**
      * Constructor for screen class. Sets up the ScheduleWatcher and observer too.
+     * Only available at the package level
      *
      * @param id screen id
      * @param seatCount amount of seats
      * @param format the format of the room
      * @param watcher the ScheduleWatcher
      */
-    public Screen(int id, int seatCount, Format format, final SchedulesWatcher watcher) {
+    Screen(int id, int seatCount, Format format, final SchedulesWatcher watcher) {
         movieSchedule = new Schedule<Movie>();
         movieSchedule.getObservers().add(this);
         watcher.getSchedules().add(movieSchedule);

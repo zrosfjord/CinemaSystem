@@ -21,13 +21,13 @@ public class Theater implements Searchable {
     private ConcurrentHashMap<Integer, Screen> screensMap;
 
     /**
-     * Theater Constructor
+     * Theater Constructor. Only available at the package-level
      *
      * @param name name of the theater
      * @param location location of the theater
      * @param watcher
      */
-    public Theater(String name, String location, final SchedulesWatcher watcher) {
+    Theater(String name, String location, final SchedulesWatcher watcher) {
         this.name = name;
         this.location = location;
 

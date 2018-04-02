@@ -15,6 +15,8 @@ public enum SearchTerm {
     MOVIE_NAME("movie-name", String.class, null),
     MOVIE_RATING("movie-rating", Movie.Rating.class, "valueOf"),
     MOVIE_FORMAT("movie-format", Movie.Format.class, "valueOf"),
+    MOVIE_HRS("movie-hrs", Integer.class, "parseInt"),
+    MOVIE_MINS("movie-mins", Integer.class, "parseInt"),
 
     TIME_HR("time-hr", Integer.class, "parseInt"),
     TIME_MIN("time-min", Integer.class, "parseInt");
@@ -66,7 +68,7 @@ public enum SearchTerm {
         if(methodName == null)
             return null;
 
-        Method m = ReflectionUtils.getMethod(variableType, methodName);
+        Method m = ReflectionUtils.getMethod(variableType, methodName, String.class);
         m.setAccessible(true);
         return m;
     }
