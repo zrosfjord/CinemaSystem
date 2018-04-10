@@ -2,42 +2,76 @@ package com.zrosfjord.cs.search;
 
 import com.zrosfjord.cs.Movie;
 import com.zrosfjord.cs.Screen;
-import com.zrosfjord.cs.utils.ReflectionUtils;
 
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 public enum SearchTerm {
 
-    SCREEN_FORMAT("screen-format", Screen.Format.class, "valueOf"),
-    SCREEN_SEATS("screen-seats", Integer.class, "valueOf"),
+    SCREEN_FORMAT("screen-format", Screen.Format.class) {
+        @Override
+        public Object convert(String s) {
+            return Screen.Format.valueOf(s);
+        }
+    },
+    SCREEN_SEATS("screen-seats", Integer.class) {
+        @Override
+        public Object convert(String s) {
+            return Integer.parseInt(s);
+        }
+    },
 
-    MOVIE_NAME("movie-name", String.class, null),
-    MOVIE_RATING("movie-rating", Movie.Rating.class, "valueOf"),
-    MOVIE_FORMAT("movie-format", Movie.Format.class, "valueOf"),
-    MOVIE_HRS("movie-hrs", Integer.class, "parseInt"),
-    MOVIE_MINS("movie-mins", Integer.class, "parseInt"),
+    MOVIE_NAME("movie-name", String.class) {
+        @Override
+        public Object convert(String s) {
+            return s;
+        }
+    },
+    MOVIE_RATING("movie-rating", Movie.Rating.class) {
+        @Override
+        public Object convert(String s) {
+            return Movie.Rating.valueOf(s);
+        }
+    },
+    MOVIE_FORMAT("movie-format", Movie.Format.class) {
+        @Override
+        public Object convert(String s) {
+            return Movie.Format.valueOf(s);
+        }
+    },
+    MOVIE_DATE("movie-date", LocalDateTime.class) {
+        @Override
+        public Object convert(String s) {
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM/dd/yy HH.mm");
+            return LocalDateTime.parse(s, formatter);
+        }
+    },
 
-    TIME_HR("time-hr", Integer.class, "parseInt"),
-    TIME_MIN("time-min", Integer.class, "parseInt");
+    DURATION_HR("duration-hr", Integer.class) {
+        @Override
+        public Object convert(String s) {
+            return Integer.parseInt(s);
+        }
+    },
+    DURATION_MIN("duration-min", Integer.class) {
+        @Override
+        public Object convert(String s) {
+            return Integer.parseInt(s);
+        }
+    };
 
 
     private final String variableName;
-    private final Class<?> variableType;
-    private final String methodName;
+    private final Class termType;
 
     /**
      * Private Constructor of the SearchTerm enum
      *
      * @param variableName name of variable
-     * @param type class type
-     * @param method name of the method that will transfrom the string to its target object
-     * @param <T> generic param
      */
-    <T> SearchTerm(String variableName, Class<T> type, String method) {
+    SearchTerm(String variableName, Class termType) {
         this.variableName = variableName;
-        this.variableType = type;
-        this.methodName = method;
+        this.termType = termType;
     }
 
     /**
@@ -58,32 +92,13 @@ public enum SearchTerm {
         throw new SearchTermException(variableName);
     }
 
-    /**
-     * Gets the conversion method
-     *
-     * @return Method to convert string to variableType
-     * @throws NoSuchMethodException if the method doesn't exist
-     */
-    public Method getConversionMethod() {
-        if(methodName == null)
-            return null;
-
-        Method m = ReflectionUtils.getMethod(variableType, methodName, String.class);
-        m.setAccessible(true);
-        return m;
-    }
-
+    public abstract Object convert(String s);
 
     public String getVariableName() {
         return variableName;
     }
 
-    public Class<?> getVariableType() {
-        return variableType;
+    public Class getTermType() {
+        return termType;
     }
-
-    public String getConversionMethodName() {
-        return methodName;
-    }
-
 }

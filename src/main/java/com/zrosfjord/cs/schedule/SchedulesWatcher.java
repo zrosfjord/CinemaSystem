@@ -1,16 +1,17 @@
 package com.zrosfjord.cs.schedule;
 
+import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Iterator;
 import java.util.LinkedList;
 
-public class SchedulesWatcher implements Runnable {
+public class SchedulesWatcher implements Runnable, Serializable {
 
     private LinkedList<Schedule> schedules;
 
-    private boolean running;
-    private Thread thread;
+    private transient boolean running;
+    private transient Thread thread;
 
     /**
      * Constructor for SchedulesWatcher
@@ -54,7 +55,7 @@ public class SchedulesWatcher implements Runnable {
                 }
 
 
-                thread.sleep(10000);
+                Thread.sleep(10000);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }

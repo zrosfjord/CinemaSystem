@@ -2,52 +2,51 @@ import com.zrosfjord.cs.Company;
 import com.zrosfjord.cs.Movie;
 import com.zrosfjord.cs.Screen;
 import com.zrosfjord.cs.Theater;
+import com.zrosfjord.cs.files.SaveState;
 import com.zrosfjord.cs.schedule.ScheduleConflictException;
 import com.zrosfjord.cs.schedule.TimeDuration;
 import com.zrosfjord.cs.search.Search;
-import com.zrosfjord.cs.search.SearchTerm;
 import com.zrosfjord.cs.search.SearchTermException;
 
-import java.lang.reflect.InvocationTargetException;
+import java.io.IOException;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-import java.time.temporal.TemporalAmount;
-import java.util.ArrayList;
-import java.util.LinkedList;
+import java.time.LocalTime;
 import java.util.List;
 import java.util.Scanner;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
-public class CinemaSystemTester {
+public class ConsoleTester {
 
-    public static void main(String[] args) throws NoSuchMethodException, IllegalAccessException, InvocationTargetException {
+    public static void main(String[] args) {
         Company amc = new Company("AMC");
+        amc.getWatcher().start();
 
         Theater riverdell = amc.createNewTheater("Riverdell Plaza", "1010 Longwind Rd.");
-        Screen riverS1 = riverdell.createNewScreen(1, 121, Screen.Format.IMAX);
-        Screen riverS2 = riverdell.createNewScreen(2, 130, Screen.Format.NORMAL);
+        Screen riverS1 = riverdell.createNewScreen(121, Screen.Format.IMAX);
+        Screen riverS2 = riverdell.createNewScreen(130, Screen.Format.NORMAL);
 
         Theater gardenState = amc.createNewTheater("Garden State Mall", "130 Rt 4");
-        Screen gardenS1 = gardenState.createNewScreen(1, 300, Screen.Format.DOLBY);
-        Screen gardenS2 = gardenState.createNewScreen(2, 70, Screen.Format.DINE_IN);
+        Screen gardenS1 = gardenState.createNewScreen(300, Screen.Format.DOLBY);
+        Screen gardenS2 = gardenState.createNewScreen(70, Screen.Format.DINE_IN);
 
-        Movie shrek = new Movie("Shrek", Movie.Rating.G, Movie.Format.NORMAL, new TimeDuration(0, 1));
-        Movie inception = new Movie("Inception", Movie.Rating.R, Movie.Format.THREE_D, new TimeDuration(0, 2));
-        Movie django = new Movie("Django", Movie.Rating.R, Movie.Format.IMAX, new TimeDuration(0, 3));
-        Movie incredibles = new Movie("Incredibles", Movie.Rating.PG_13, Movie.Format.NORMAL, new TimeDuration(0, 1));
+        Movie shrek = new Movie("Shrek", Movie.Rating.G, Movie.Format.NORMAL, new TimeDuration(1, 40));
+        Movie inception = new Movie("Inception", Movie.Rating.R, Movie.Format.THREE_D, new TimeDuration(2, 30));
+        Movie django = new Movie("Django", Movie.Rating.R, Movie.Format.IMAX, new TimeDuration(2, 50));
+        Movie incredibles = new Movie("Incredibles", Movie.Rating.PG_13, Movie.Format.NORMAL, new TimeDuration(1, 45));
 
         try {
-            riverS1.getMoviesSchedule().addScheduleable(LocalDateTime.now(), shrek);
-            riverS1.getMoviesSchedule().addScheduleable(LocalDateTime.now().plusMinutes(4), inception);
-            riverS1.getMoviesSchedule().addScheduleable(LocalDateTime.now().plusMinutes(1), django);
-            riverS1.getMoviesSchedule().addScheduleable(LocalDateTime.now().plusMinutes(6), incredibles);
+            LocalDate today = LocalDate.now();
 
+            riverS1.getMoviesSchedule().addScheduleable(LocalDateTime.of(today, LocalTime.of(12, 30)), shrek);
+            riverS1.getMoviesSchedule().addScheduleable(LocalDateTime.of(today, LocalTime.of(14, 30)), inception);
+            riverS1.getMoviesSchedule().addScheduleable(LocalDateTime.of(today, LocalTime.of(17, 20)), django);
+            riverS1.getMoviesSchedule().addScheduleable(LocalDateTime.of(today, LocalTime.of(20, 40)), incredibles);
+
+            /*
             riverS2.getMoviesSchedule().addScheduleable(LocalDateTime.now(), inception);
             riverS2.getMoviesSchedule().addScheduleable(LocalDateTime.now().plusMinutes(2), inception);
             riverS2.getMoviesSchedule().addScheduleable(LocalDateTime.now().plusMinutes(4), django);
-
 
             gardenS1.getMoviesSchedule().addScheduleable(LocalDateTime.now(), shrek);
             gardenS1.getMoviesSchedule().addScheduleable(LocalDateTime.now().plusMinutes(1), inception);
@@ -55,11 +54,12 @@ public class CinemaSystemTester {
 
             gardenS2.getMoviesSchedule().addScheduleable(LocalDateTime.now(), django);
             gardenS2.getMoviesSchedule().addScheduleable(LocalDateTime.now().plusMinutes(3), inception);
-            gardenS2.getMoviesSchedule().addScheduleable(LocalDateTime.now().plusMinutes(5), incredibles);
+            gardenS2.getMoviesSchedule().addScheduleable(LocalDateTime.now().plusMinutes(5), incredibles);*/
         } catch (ScheduleConflictException ex) {
             ex.printStackTrace();
         }
 
+        SaveState saveState = new SaveState(amc);
 
         Scanner scanner = new Scanner(System.in);
 
@@ -89,8 +89,19 @@ public class CinemaSystemTester {
                         .map(Object::toString)
                         .collect(Collectors.joining("\n + ")))
                         + "\n----------------------\n");
+            } else {
+                break;
             }
         }
+
+        amc.getWatcher().setRunning(false);
+
+        try {
+            saveState.recordState();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
     }
 
 }

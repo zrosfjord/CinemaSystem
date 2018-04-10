@@ -5,15 +5,15 @@ import com.zrosfjord.cs.search.Search;
 import com.zrosfjord.cs.search.SearchTermException;
 import com.zrosfjord.cs.search.Searchable;
 
+import java.io.Serializable;
 import java.util.Collections;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
-public class Theater implements Searchable {
+public class Theater implements Searchable, Serializable {
 
     private String name, location;
     private final SchedulesWatcher watcher;
@@ -44,7 +44,9 @@ public class Theater implements Searchable {
      * @param format the format of the screen
      * @return the new Screen
      */
-    public Screen createNewScreen(int id, int seatCount, Screen.Format format) {
+    public Screen createNewScreen(int seatCount, Screen.Format format) {
+        int id = screensMap.size() + 1;
+
         Screen screen = new Screen(id, seatCount, format, watcher);
         screensMap.put(id, screen);
         screensMap = screensMap.entrySet().stream()

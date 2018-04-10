@@ -5,17 +5,17 @@ import com.zrosfjord.cs.search.Search;
 import com.zrosfjord.cs.search.SearchTermException;
 import com.zrosfjord.cs.search.Searchable;
 
+import java.io.Serializable;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.stream.Collectors;
 
-public class Company implements Searchable {
+public class Company implements Searchable, Serializable {
 
     private String name;
     private LinkedList<Theater> theaters;
 
-    private SchedulesWatcher watcher;
+    private final SchedulesWatcher watcher;
 
     /**
      * Constructor for Company and starts a ScheduleWatcher
@@ -27,7 +27,6 @@ public class Company implements Searchable {
         this.theaters = new LinkedList<Theater>();
 
         this.watcher = new SchedulesWatcher();
-        watcher.start();
     }
 
     /**
@@ -61,4 +60,7 @@ public class Company implements Searchable {
         return Collections.unmodifiableList(theaters);
     }
 
+    public SchedulesWatcher getWatcher() {
+        return watcher;
+    }
 }

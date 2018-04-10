@@ -1,8 +1,9 @@
 package com.zrosfjord.cs.schedule;
 
+import java.io.Serializable;
 import java.time.LocalDateTime;
 
-public class TimeDuration {
+public class TimeDuration implements Serializable {
 
     private int hrs, mins;
 

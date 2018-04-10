@@ -1,19 +1,16 @@
 package com.zrosfjord.cs;
 
 import com.zrosfjord.cs.schedule.Schedule;
-import com.zrosfjord.cs.schedule.ScheduleConflictException;
 import com.zrosfjord.cs.schedule.ScheduleObserver;
 import com.zrosfjord.cs.schedule.SchedulesWatcher;
 
-import java.time.LocalDateTime;
+import java.io.Serializable;
 import java.util.Collections;
-import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
-public class Screen implements ScheduleObserver<Movie> {
+public class Screen implements ScheduleObserver<Movie>, Serializable {
 
     private final int id;
     private final int seatCount;
@@ -134,7 +131,7 @@ public class Screen implements ScheduleObserver<Movie> {
         return currentMovie;
     }
 
-    public enum Format {
+    public enum Format implements Serializable {
         NORMAL, DINE_IN, IMAX, DOLBY
     }
 

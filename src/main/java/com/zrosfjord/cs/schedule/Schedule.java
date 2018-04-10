@@ -2,12 +2,13 @@ package com.zrosfjord.cs.schedule;
 
 import com.zrosfjord.cs.utils.RandomStringUtil;
 
+import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Iterator;
 import java.util.LinkedList;
 
-public class Schedule<T extends Scheduleable> {
+public class Schedule<T extends Scheduleable> implements Serializable {
 
     private LinkedList<ScheduleItem> items;
     private LinkedList<ScheduleObserver> observers;
@@ -42,7 +43,7 @@ public class Schedule<T extends Scheduleable> {
      * @param now current time
      */
     public void clean(LocalDateTime now) {
-        // Goes through the items list
+        // Goes through the displays list
         Iterator<ScheduleItem> itemsIt = items.iterator();
         while (itemsIt.hasNext()) {
 
@@ -134,7 +135,7 @@ public class Schedule<T extends Scheduleable> {
         return observers;
     }
 
-    public class ScheduleItem implements Comparable<ScheduleItem> {
+    public class ScheduleItem implements Comparable<ScheduleItem>, Serializable {
 
         private LocalDateTime startTime;
         private T scheduleable;

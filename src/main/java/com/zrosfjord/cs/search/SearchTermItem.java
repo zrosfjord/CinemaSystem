@@ -1,17 +1,13 @@
 package com.zrosfjord.cs.search;
 
-import com.zrosfjord.cs.utils.ReflectionUtils;
-
 import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
+import java.time.LocalDateTime;
 import java.util.function.BiFunction;
-import java.util.function.Function;
 
 public class SearchTermItem<T> {
 
     private SearchTerm term;
     private T item;
-    private String rawItem;
 
     private BiFunction<T, T, Boolean> function;
 
@@ -23,7 +19,7 @@ public class SearchTermItem<T> {
      */
     public SearchTermItem(SearchTerm term, String item)  {
         this.term = term;
-        this.rawItem = item;
+        this.item = (T) term.convert(item);
 
         init();
     }
@@ -36,23 +32,25 @@ public class SearchTermItem<T> {
      * @throws IllegalAccessException if there are issues converting
      */
     private void init() {
-        Method m = term.getConversionMethod();
-        if(m != null)
-            this.item = (T) ReflectionUtils.invokeMethod(m, null, rawItem.toUpperCase());
-        else
-            this.item = (T) rawItem;
-
-        if(term.getVariableType().equals(Integer.class)) {
+        if (item instanceof Integer) {
             function = (a, b) -> {
                 return (Integer) a <= (Integer) b;
             };
-        } else if(term.getVariableType().equals(String.class)) {
+        } else if (item instanceof String) {
             function = (a, b) -> {
                 return ((String) a).equalsIgnoreCase((String) b);
             };
+        } else if (item instanceof LocalDateTime) {
+            function = (a, b) -> {
+                LocalDateTime aTime = (LocalDateTime) a;
+                LocalDateTime bTime = (LocalDateTime) b;
+
+                boolean day = aTime.toLocalDate().isEqual(bTime.toLocalDate());
+                return day && aTime.isBefore(bTime);
+            };
         } else {
-            function = (a,b) -> {
-                return a == b;
+            function = (a, b) -> {
+                return a.equals(b);
             };
         }
     }
@@ -68,4 +66,5 @@ public class SearchTermItem<T> {
     public BiFunction<T, T, Boolean> getFunction() {
         return function;
     }
+
 }

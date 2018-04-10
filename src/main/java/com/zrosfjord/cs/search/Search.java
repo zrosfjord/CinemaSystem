@@ -47,7 +47,7 @@ public class Search {
                 String typeStr = (tMatch.find()) ? tMatch.group("type").trim() : null;
 
                 // Goes through each types variables
-                Pattern variablePat = Pattern.compile("(?<variable>\\w+):(?<value>\\w*[^,\\}]*)");
+                Pattern variablePat = Pattern.compile("(?<variable>[\\w]+):(?<value>[\\w\\.]*[^,\\}]*)");
                 Matcher vMatch = variablePat.matcher(str);
 
                 // Variable loop
@@ -65,10 +65,10 @@ public class Search {
                     // Used for enums
                     List<String> valueList = new ArrayList<String>();
 
-                    if (term.getVariableType().isEnum()) {
+                    if (term.getTermType().isEnum()) {
 
                         // Puts enum values in a string list
-                        Enum<?>[] enumb = (Enum<?>[]) term.getVariableType().getEnumConstants();
+                        Enum<?>[] enumb = (Enum<?>[]) term.getTermType().getEnumConstants();
                         List<String> enumbList = Arrays.stream(enumb).map(Enum::name).collect(Collectors.toList());
 
                         // If value is -1 all values get inserted, else makes sure the enum value is real
@@ -85,7 +85,7 @@ public class Search {
 
                     // Adds all values to variableMap
                     valueList.stream().forEach(listItem -> {
-                        variableMap.get(term).add(new SearchTermItem(term, listItem.toUpperCase()));
+                        variableMap.get(term).add(new SearchTermItem(term, listItem));
                     });
                 }
             }
@@ -134,15 +134,14 @@ public class Search {
                             put(SearchTerm.MOVIE_FORMAT, m.getFormat());
                             put(SearchTerm.MOVIE_RATING, m.getRating());
                             put(SearchTerm.MOVIE_NAME, m.getName());
-                            put(SearchTerm.MOVIE_HRS, m.getTimeDuration().getHours());
-                            put(SearchTerm.MOVIE_MINS, m.getTimeDuration().getMinutes());
-                            put(SearchTerm.TIME_HR, nextItem.getStartTime().getHour());
-                            put(SearchTerm.TIME_MIN, nextItem.getStartTime().getMinute());
+                            put(SearchTerm.MOVIE_DATE, nextItem.getStartTime());
+                            put(SearchTerm.DURATION_HR, nextItem.getStartTime().getHour());
+                            put(SearchTerm.DURATION_MIN, nextItem.getStartTime().getMinute());
                         }};
 
                         // Runs meetsTerm on each entry and stores results
                         List<Boolean> bList = map.entrySet().stream()
-                                .map(entry -> (boolean) meetsTerm(entry.getKey(), entry.getValue()))
+                                .map(entry -> meetsTerm(entry.getKey(), entry.getValue()))
                                 .collect(Collectors.toList());
 
                         // Checks if any qualifier failed

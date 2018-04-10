@@ -3,7 +3,13 @@ package com.zrosfjord.cs;
 import com.zrosfjord.cs.schedule.Scheduleable;
 import com.zrosfjord.cs.schedule.TimeDuration;
 
-public class Movie implements Scheduleable {
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
+
+public class Movie implements Scheduleable, Serializable {
+
+    public static final List<Movie> REGISTRY = new ArrayList<Movie>();
 
     private String name;
     private Rating rating;
@@ -25,6 +31,8 @@ public class Movie implements Scheduleable {
         this.format = format;
 
         this.duration = duration;
+
+        REGISTRY.add(this);
     }
 
     @Override
@@ -52,12 +60,12 @@ public class Movie implements Scheduleable {
         return rating;
     }
 
-    public enum Rating {
-        G, PG, PG_13, R, NC_17;
+    public enum Rating implements Serializable {
+        G, PG, PG_13, R, NC_17
     }
 
-    public enum Format {
-        NORMAL, THREE_D, IMAX;
+    public enum Format implements Serializable {
+        NORMAL, THREE_D, IMAX
     }
 
 }
